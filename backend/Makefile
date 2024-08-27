@@ -24,3 +24,6 @@ migrate_up:
 
 migrate_down:	
 	@migrate -path db/migrations -database "postgres://${DB_USERNAME}:${DB_PASSWORD}@localhost:5432/${DB_DATABASE}?sslmode=disable" down
+
+sqlc:
+	sqlc generate
