@@ -1,0 +1,21 @@
+services:
+  postgres:
+    container_name: superfin_postgres
+    image: postgres:15-alpine
+    restart: always
+    user: postgres
+    secrets:
+      - db-password
+    environment:
+      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    ports:
+      - 5432:5432
+    volumes:
+    - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:
+secrets:
+  db-password:
+    file: db/password.txt
