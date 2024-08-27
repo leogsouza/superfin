@@ -20,7 +20,7 @@ compose_down:
 # make sure the environment variables are present in the system
 # by default I include it from .env file
 migrate_up:
-	migrate -path db/migrations -database "postgres://${DB_USERNAME}:${DB_PASSWORD}@localhost:5432/${DB_DATABASE}?sslmode=disable" up
+	@migrate -path db/migrations -database "postgres://${DB_USERNAME}:${DB_PASSWORD}@localhost:5432/${DB_DATABASE}?sslmode=disable" up
 
 migrate_down:	
-	migrate -path db/migrations -database "postgres://${DB_USERNAME}:${DB_PASSWORD}@localhost:5432/${DB_DATABASE}?sslmode=disable" down
+	@migrate -path db/migrations -database "postgres://${DB_USERNAME}:${DB_PASSWORD}@localhost:5432/${DB_DATABASE}?sslmode=disable" down
