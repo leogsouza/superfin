@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"leogsouza.dev/superfin/api"
+)
 
 func main() {
-	fmt.Println("Hello superfin")
+	api.NewServer(3000)
 }
