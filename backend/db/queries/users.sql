@@ -15,8 +15,8 @@ INSERT INTO users (
 ) VALUES ($1, $2) RETURNING *;
 
 -- name: UpdateUserPassword :one
-UPDATE users SET password = $1
-where ID = $2 RETURNING *;
+UPDATE users SET password = $1, updated_at = $2
+where ID = $3 RETURNING *;
 
 -- name: DeleteUser :exec
 DELETE FROM users WHERE id = $1;

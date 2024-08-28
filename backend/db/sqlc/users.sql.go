@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"time"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -117,17 +118,18 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 }
 
 const updateUserPassword = `-- name: UpdateUserPassword :one
-UPDATE users SET password = $1
-where ID = $2 RETURNING id, email, password, created_at, updated_at
+UPDATE users SET password = $1, updated_at = $2
+where ID = $3 RETURNING id, email, password, created_at, updated_at
 `
 
 type UpdateUserPasswordParams struct {
-	Password string `json:"password"`
-	ID       int64  `json:"id"`
+	Password  string    `json:"password"`
+	UpdatedAt time.Time `json:"updated_at"`
+	ID        int64     `json:"id"`
 }
 
 func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, updateUserPassword, arg.Password, arg.ID)
+	row := q.db.QueryRowContext(ctx, updateUserPassword, arg.Password, arg.UpdatedAt, arg.ID)
 	var i User
 	err := row.Scan(
 		&i.ID,
