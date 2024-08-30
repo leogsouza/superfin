@@ -30,3 +30,9 @@ sqlc:
 
 test:
 	@go test ./...
+
+test-cover:
+	@go test -v ./... -cover
+
+dev:
+	air
