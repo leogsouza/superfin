@@ -1,9 +1,20 @@
 package main
 
 import (
+	"context"
+	"log"
+
+	"github.com/joho/godotenv"
+	"github.com/sethvargo/go-envconfig"
 	"leogsouza.dev/superfin/api"
+	"leogsouza.dev/superfin/config"
 )
 
 func main() {
-	api.NewServer(3000)
+	godotenv.Load()
+	var c config.Config
+	if err := envconfig.Process(context.Background(), &c); err != nil {
+		log.Fatal(err)
+	}
+	api.NewServer(c.AppConfig.Port)
 }

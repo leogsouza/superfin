@@ -1,7 +1,12 @@
 package config
 
 type Config struct {
-	DBConfig *DBConfig `env:", prefix=DB_"`
+	AppConfig *AppConfig `env:", prefix=APP_"`
+	DBConfig  *DBConfig  `env:", prefix=DB_"`
+}
+
+type AppConfig struct {
+	Port int `env:"PORT"`
 }
 
 type DBConfig struct {
