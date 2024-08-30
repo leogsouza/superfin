@@ -16,5 +16,7 @@ func main() {
 	if err := envconfig.Process(context.Background(), &c); err != nil {
 		log.Fatal(err)
 	}
-	api.NewServer(c.AppConfig.Port)
+	server := api.NewServer(&c)
+
+	server.Start(c.AppConfig.Port)
 }
