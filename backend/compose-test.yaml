@@ -1,0 +1,21 @@
+services:
+  postgres_test:
+    container_name: superfin_postgres_test
+    image: postgres:15-alpine
+    restart: always
+    user: postgres
+    secrets:
+      - db-password-test
+    environment:
+      - POSTGRES_DB=${TEST_DB_DATABASE}
+      - POSTGRES_USER=${TEST_DB_USERNAME}
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password-test
+    ports:
+      - 5433:5432
+    volumes:
+    - db-data_test:/var/lib/postgresql/data
+volumes:
+  db-data_test:
+secrets:
+  db-password-test:
+    file: db/password-test.txt

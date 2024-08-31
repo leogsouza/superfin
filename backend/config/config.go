@@ -16,3 +16,7 @@ type DBConfig struct {
 	Password string `env:"PASSWORD"`
 	Port     int    `env:"PORT"`
 }
+
+type TestConfig struct {
+	Config *Config `env:", prefix=TEST_"`
+}

@@ -25,13 +25,13 @@ func TestMain(m *testing.M) {
 		log.Fatal("Error on load env variables ", err)
 	}
 
-	var c config.Config
+	var c config.TestConfig
 	if err := envconfig.Process(ctx, &c); err != nil {
 		log.Fatal(err)
 	}
 
 	conn, err := sql.Open("postgres", fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
-		c.DBConfig.User, c.DBConfig.Password, c.DBConfig.Host, c.DBConfig.Port, c.DBConfig.DbName))
+		c.Config.DBConfig.User, c.Config.DBConfig.Password, c.Config.DBConfig.Host, c.Config.DBConfig.Port, c.Config.DBConfig.DbName))
 
 	if err != nil {
 		log.Fatal("Could not connect to database", err)

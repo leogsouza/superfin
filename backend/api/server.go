@@ -12,7 +12,7 @@ import (
 
 type Server struct {
 	queries *db.Queries
-	router  *fiber.App
+	Router  *fiber.App
 }
 
 func NewServer(c *config.Config) *Server {
@@ -28,17 +28,21 @@ func NewServer(c *config.Config) *Server {
 
 	return &Server{
 		queries: q,
-		router:  f,
+		Router:  f,
 	}
 }
 
 func (s *Server) Start(port int) {
 
-	s.router.Get("/", func(c *fiber.Ctx) error {
+	s.Router.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"mesage": "Welcome to SuperFin",
 		})
 	})
 
-	s.router.Listen(fmt.Sprintf(":%d", port))
+	userHandler := NewUserHandler(s)
+
+	userHandler.RegisterRoutes()
+
+	s.Router.Listen(fmt.Sprintf(":%d", port))
 }
