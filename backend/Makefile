@@ -56,3 +56,13 @@ test:
 
 dev:
 	air
+
+start:
+	@echo "Starting db containers"
+	@make -s compose_up
+	@echo "Waiting for db be ready"
+	@sleep 2
+	@echo "Running migrations"
+	@make -s migrate_up
+	@echo "Starting the application"
+	@air

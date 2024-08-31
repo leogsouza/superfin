@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	db "leogsouza.dev/superfin/db/sqlc"
@@ -21,6 +23,7 @@ func (u *userHandler) RegisterRoutes() {
 	userGroup := u.server.Router.Group("/users")
 	userGroup.Get("", u.listUsers)
 	userGroup.Post("", u.createUser)
+	userGroup.Put("/:id", u.updateUser)
 }
 
 func (u *userHandler) listUsers(c *fiber.Ctx) error {
@@ -73,6 +76,48 @@ func (u *userHandler) createUser(c *fiber.Ctx) error {
 	userResponse := transformDbUsertoUserResponse(&user)
 
 	return c.Status(fiber.StatusCreated).JSON(userResponse)
+}
+
+func (u userHandler) updateUser(c *fiber.Ctx) error {
+	userID, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	var userParams updateUserParams
+	if err := c.BodyParser(&userParams); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	userParams.ID = int64(userID)
+	userParams.UpdatedAt = time.Now()
+
+	// validate the data
+	validate := validator.New()
+	if err := validate.Struct(userParams); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
+	}
+
+	hashedPassword, err := utils.GenerateHashPassword(userParams.Password)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	userDb := db.UpdateUserPasswordParams{
+		ID:        userParams.ID,
+		Password:  hashedPassword,
+		UpdatedAt: userParams.UpdatedAt,
+	}
+
+	userUpdated, err := u.server.queries.UpdateUserPassword(c.Context(), userDb)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	userResponse := transformDbUsertoUserResponse(&userUpdated)
+
+	return c.Status(fiber.StatusOK).JSON(userResponse)
+
 }
 
 func transformDbUsertoUserResponse(dbUser *db.User) *userResponse {

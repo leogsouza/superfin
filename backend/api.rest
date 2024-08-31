@@ -17,3 +17,10 @@ Content-Type: application/json
   "email": "leonardo1@test.com",
   "password": "passleo123"
 }
+
+### PUT - update user password
+PUT {{baseUrl}}/users/249
+
+{
+  "password": "leo"
+}

@@ -13,3 +13,9 @@ type userResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type updateUserParams struct {
+	ID        int64     `json:"id" validate:"required"`
+	Password  string    `json:"password" validate:"required,gte=8"`
+	UpdatedAt time.Time `json:"updated_at" validate:"required"`
+}
