@@ -8,6 +8,7 @@ GET {{baseUrl}} HTTP/1.1
 
 ### GET users
 GET {{baseUrl}}/users HTTP/1.1
+X-Api-Token: {{authToken}}
 
 ### POST users
 POST {{baseUrl}}/users
@@ -20,7 +21,27 @@ Content-Type: application/json
 
 ### PUT - update user password
 PUT {{baseUrl}}/users/249
+Content-Type: application/json
 
 {
-  "password": "leo"
+  "password": "leopass123"
 }
+
+
+### POST login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "leonardo1@test.com",
+  "password": "passleo123"
+}
+
+###
+@authToken = {{login.response.body.token}}
+
+
+### GET me
+GET {{baseUrl}}/users/me
+X-Api-Token: {{authToken}}

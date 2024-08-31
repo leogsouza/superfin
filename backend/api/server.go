@@ -13,6 +13,7 @@ import (
 type Server struct {
 	queries *db.Queries
 	Router  *fiber.App
+	Config  *config.Config
 }
 
 func NewServer(c *config.Config) *Server {
@@ -29,6 +30,7 @@ func NewServer(c *config.Config) *Server {
 	return &Server{
 		queries: q,
 		Router:  f,
+		Config:  c,
 	}
 }
 
@@ -41,8 +43,10 @@ func (s *Server) Start(port int) {
 	})
 
 	userHandler := NewUserHandler(s)
-
 	userHandler.RegisterRoutes()
+
+	authHandler := NewAuthHandler(s)
+	authHandler.RegisterRoutes()
 
 	s.Router.Listen(fmt.Sprintf(":%d", port))
 }

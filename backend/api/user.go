@@ -1,12 +1,18 @@
 package api
 
 import (
+	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	db "leogsouza.dev/superfin/db/sqlc"
 	"leogsouza.dev/superfin/utils"
+)
+
+var (
+	errIncorrectCredentials = errors.New("incorrect credentials")
 )
 
 type userHandler struct {
@@ -21,9 +27,11 @@ func NewUserHandler(server *Server) *userHandler {
 
 func (u *userHandler) RegisterRoutes() {
 	userGroup := u.server.Router.Group("/users")
-	userGroup.Get("", u.listUsers)
+	userGroup.Get("", jwtAuthentication, u.listUsers)
+	userGroup.Get("me", jwtAuthentication, u.getLoggedUser)
 	userGroup.Post("", u.createUser)
-	userGroup.Put("/:id", u.updateUser)
+	userGroup.Put("/:id", jwtAuthentication, u.updateUser)
+
 }
 
 func (u *userHandler) listUsers(c *fiber.Ctx) error {
@@ -45,6 +53,21 @@ func (u *userHandler) listUsers(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(usersResponse)
+}
+
+func (u *userHandler) getLoggedUser(c *fiber.Ctx) error {
+	userEmail, ok := c.Locals("userEmail").(string)
+	if !ok || userEmail == "" {
+		return unauthorizedUser(c)
+	}
+
+	user, err := u.server.queries.GetUserByEmail(c.Context(), userEmail)
+	if err != nil {
+		return unauthorizedUser(c)
+	}
+
+	userResponse := transformDbUsertoUserResponse(&user)
+	return c.Status(200).JSON(userResponse)
 }
 
 func (u *userHandler) createUser(c *fiber.Ctx) error {
@@ -82,6 +105,13 @@ func (u userHandler) updateUser(c *fiber.Ctx) error {
 	userID, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	_, err = u.server.queries.GetUserById(c.Context(), int64(userID))
+	if err == sql.ErrNoRows {
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": errIncorrectCredentials.Error()})
+	} else if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	var userParams updateUserParams

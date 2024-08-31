@@ -6,7 +6,8 @@ type Config struct {
 }
 
 type AppConfig struct {
-	Port int `env:"PORT"`
+	Port      int    `env:"PORT"`
+	SecretKey string `env:"SECRET_KEY"`
 }
 
 type DBConfig struct {
