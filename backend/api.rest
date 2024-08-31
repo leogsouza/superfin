@@ -7,7 +7,13 @@ GET {{baseUrl}} HTTP/1.1
 
 
 ### GET users
-GET {{baseUrl}}/users
+GET {{baseUrl}}/users HTTP/1.1
 
 ### POST users
 POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "email": "leonardo1@test.com",
+  "password": "passleo123"
+}
