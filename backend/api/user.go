@@ -1,8 +1,6 @@
 package api
 
 import (
-	"time"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	db "leogsouza.dev/superfin/db/sqlc"
@@ -46,18 +44,6 @@ func (u *userHandler) listUsers(c *fiber.Ctx) error {
 	return c.JSON(usersResponse)
 }
 
-type createUserParams struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,gte=8"`
-}
-
-type userResponse struct {
-	ID        int64     `json:"id"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
 func (u *userHandler) createUser(c *fiber.Ctx) error {
 	var userParams createUserParams
 
@@ -86,7 +72,7 @@ func (u *userHandler) createUser(c *fiber.Ctx) error {
 	}
 	userResponse := transformDbUsertoUserResponse(&user)
 
-	return c.Status(fiber.StatusOK).JSON(userResponse)
+	return c.Status(fiber.StatusCreated).JSON(userResponse)
 }
 
 func transformDbUsertoUserResponse(dbUser *db.User) *userResponse {
