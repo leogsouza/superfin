@@ -8,7 +8,7 @@ GET {{baseUrl}} HTTP/1.1
 
 ### GET users
 GET {{baseUrl}}/users HTTP/1.1
-X-Api-Token: {{authToken}}
+Authorization: Bearer {{authToken}}
 
 ### POST users
 POST {{baseUrl}}/users
@@ -44,4 +44,4 @@ Content-Type: application/json
 
 ### GET me
 GET {{baseUrl}}/users/me
-X-Api-Token: {{authToken}}
+Authorization: Bearer {{authToken}}

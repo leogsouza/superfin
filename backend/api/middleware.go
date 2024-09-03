@@ -3,13 +3,23 @@ package api
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"leogsouza.dev/superfin/utils"
 )
 
 func jwtAuthentication(c *fiber.Ctx) error {
-	token := c.Get("X-Api-Token")
+	authToken := c.Get("Authorization")
+	if authToken == "" {
+		return fmt.Errorf("unauthorized")
+	}
+	tokenSplit := strings.Split(authToken, " ")
+	if len(tokenSplit) < 2 {
+		return fmt.Errorf("unauthorized")
+	}
+	token := tokenSplit[1]
+
 	if token == "" {
 		return fmt.Errorf("unauthorized")
 	}
