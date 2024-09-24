@@ -44,6 +44,7 @@ const Auth: FC<AuthType> = ({
         </div>
       </div>
       <div className="controller">
+        <div className="content">
         <h1>{title}</h1>
         <form ref={form} onSubmit={(e) => onSubmit(e, form)}>
           <div className="formGroup">
@@ -78,6 +79,7 @@ const Auth: FC<AuthType> = ({
             </Link>
           </div>
         </form>
+        </div>
       </div>
     </div>
   )

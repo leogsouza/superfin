@@ -17,3 +17,5 @@ const Login = () => {
 
   return <Auth showRemembered onSubmit={onSubmit} />
 }
+
+export default Login;
